@@ -36,3 +36,9 @@ jobs:
           publish_branch: master
           publish_dir: ./dist
           force_orphan: true
+
+      - name: Publish PR branch to edxi (pr-to-edxi)
+        env:
+          GH_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          ./scripts/publish-to-edxi-pr.sh
