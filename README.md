@@ -1,180 +1,95 @@
-# AstroPaper 📄
+# astro-blog (miniade)
 
-![AstroPaper](public/astropaper-og.jpg)
-[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/community/file/1356898632249991861)
-![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![GitHub](https://img.shields.io/github/license/satnaing/astro-paper?color=%232F3741&style=for-the-badge)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white&style=for-the-badge)](https://conventionalcommits.org)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=for-the-badge)](http://commitizen.github.io/cz-cli/)
+这个仓库是 **miniade 的博客源代码仓库**（Astro + pnpm）。
 
-AstroPaper is a minimal, responsive, accessible and SEO-friendly Astro blog theme. This theme is designed and crafted based on [my personal blog](https://satnaing.dev/blog).
+- 你在这里写 Markdown 文章
+- GitHub Actions 会自动构建静态站点并发布到：
+  - `miniade/miniade.github.io:master`（给 miniade.github.io 使用；deploy 采用 `force_orphan: true`）
+  - 同时维护一个用于给上游提交 PR 的固定分支：`miniade/miniade.github.io:pr-to-edxi`
+  - 并自动创建/更新 PR 到 `edxi/edxi.github.io:master`
 
-Read [the blog posts](https://astro-paper.pages.dev/posts/) or check [the README Documentation Section](#-documentation) for more info.
-
-## 🔥 Features
-
-- [x] type-safe markdown
-- [x] super fast performance
-- [x] accessible (Keyboard/VoiceOver)
-- [x] responsive (mobile ~ desktops)
-- [x] SEO-friendly
-- [x] light & dark mode
-- [x] fuzzy search
-- [x] draft posts & pagination
-- [x] sitemap & rss feed
-- [x] followed best practices
-- [x] highly customizable
-- [x] dynamic OG image generation for blog posts [#15](https://github.com/satnaing/astro-paper/pull/15) ([Blog Post](https://astro-paper.pages.dev/posts/dynamic-og-image-generation-in-astropaper-blog-posts/))
-
-_Note: I've tested screen-reader accessibility of AstroPaper using **VoiceOver** on Mac and **TalkBack** on Android. I couldn't test all other screen-readers out there. However, accessibility enhancements in AstroPaper should be working fine on others as well._
-
-## ✅ Lighthouse Score
-
-<p align="center">
-  <a href="https://pagespeed.web.dev/report?url=https%3A%2F%2Fastro-paper.pages.dev%2F&form_factor=desktop">
-    <img width="710" alt="AstroPaper Lighthouse Score" src="AstroPaper-lighthouse-score.svg">
-  </a>
-</p>
-
-## 🚀 Project Structure
-
-Inside of AstroPaper, you'll see the following folders and files:
-
-```bash
-/
-├── public/
-│   ├── pagefind/ # auto-generated when build
-│   ├── favicon.svg
-│   └── astropaper-og.jpg
-├── src/
-│   ├── assets/
-│   │   ├── icons/
-│   │   └── images/
-│   ├── components/
-│   ├── data/
-│   │   └── blog/
-│   │       └── some-blog-posts.md
-│   ├── layouts/
-│   ├── pages/
-│   ├── scripts/
-│   ├── styles/
-│   ├── utils/
-│   ├── config.ts
-│   ├── constants.ts
-│   ├── content.config.ts
-│   ├── env.d.ts
-│   └── remark-collapse.d.ts
-└── astro.config.ts
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-All blog posts are stored in `src/data/blog` directory.
-
-## 📖 Documentation
-
-Documentation can be read in two formats\_ _markdown_ & _blog post_.
-
-- Configuration - [markdown](src/data/blog/how-to-configure-astropaper-theme.md) | [blog post](https://astro-paper.pages.dev/posts/how-to-configure-astropaper-theme/)
-- Add Posts - [markdown](src/data/blog/adding-new-post.md) | [blog post](https://astro-paper.pages.dev/posts/adding-new-posts-in-astropaper-theme/)
-- Customize Color Schemes - [markdown](src/data/blog/customizing-astropaper-theme-color-schemes.md) | [blog post](https://astro-paper.pages.dev/posts/customizing-astropaper-theme-color-schemes/)
-- Predefined Color Schemes - [markdown](src/data/blog/predefined-color-schemes.md) | [blog post](https://astro-paper.pages.dev/posts/predefined-color-schemes/)
-
-## 💻 Tech Stack
-
-**Main Framework** - [Astro](https://astro.build/)  
-**Type Checking** - [TypeScript](https://www.typescriptlang.org/)  
-**Styling** - [TailwindCSS](https://tailwindcss.com/)  
-**UI/UX** - [Figma Design File](https://www.figma.com/community/file/1356898632249991861)  
-**Static Search** - [FuseJS](https://pagefind.app/)  
-**Icons** - [Tablers](https://tabler-icons.io/)  
-**Code Formatting** - [Prettier](https://prettier.io/)  
-**Deployment** - [Cloudflare Pages](https://pages.cloudflare.com/)  
-**Illustration in About Page** - [https://freesvgillustration.com](https://freesvgillustration.com/)  
-**Linting** - [ESLint](https://eslint.org)
-
-## 👨🏻‍💻 Running Locally
-
-You can start using this project locally by running the following command in your desired directory:
-
-```bash
-# pnpm
-pnpm create astro@latest --template satnaing/astro-paper
-
-# npm
-npm create astro@latest -- --template satnaing/astro-paper
-
-# yarn
-yarn create astro --template satnaing/astro-paper
-
-# bun
-bun create astro@latest -- --template satnaing/astro-paper
-```
-
-Then start the project by running the following commands:
-
-```bash
-# install dependencies if you haven't done so in the previous step.
-pnpm install
-
-# start running the project
-pnpm run dev
-```
-
-As an alternative approach, if you have Docker installed, you can use Docker to run this project locally. Here's how:
-
-```bash
-# Build the Docker image
-docker build -t astropaper .
-
-# Run the Docker container
-docker run -p 4321:80 astropaper
-```
-
-## Google Site Verification (optional)
-
-You can easily add your [Google Site Verification HTML tag](https://support.google.com/webmasters/answer/9008080#meta_tag_verification&zippy=%2Chtml-tag) in AstroPaper using an environment variable. This step is optional. If you don't add the following environment variable, the google-site-verification tag won't appear in the HTML `<head>` section.
-
-```bash
-# in your environment variable file (.env)
-PUBLIC_GOOGLE_SITE_VERIFICATION=your-google-site-verification-value
-```
-
-> See [this discussion](https://github.com/satnaing/astro-paper/discussions/334#discussioncomment-10139247) for adding AstroPaper to the Google Search Console.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-> **_Note!_** For `Docker` commands we must have it [installed](https://docs.docker.com/engine/install/) in your machine.
-
-| Command                              | Action                                                                                                                           |
-| :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm install`                       | Installs dependencies                                                                                                            |
-| `pnpm run dev`                       | Starts local dev server at `localhost:4321`                                                                                      |
-| `pnpm run build`                     | Build your production site to `./dist/`                                                                                          |
-| `pnpm run preview`                   | Preview your build locally, before deploying                                                                                     |
-| `pnpm run format:check`              | Check code format with Prettier                                                                                                  |
-| `pnpm run format`                    | Format codes with Prettier                                                                                                       |
-| `pnpm run sync`                      | Generates TypeScript types for all Astro modules. [Learn more](https://docs.astro.build/en/reference/cli-reference/#astro-sync). |
-| `pnpm run lint`                      | Lint with ESLint                                                                                                                 |
-| `docker compose up -d`               | Run AstroPaper on docker, You can access with the same hostname and port informed on `dev` command.                              |
-| `docker compose run app npm install` | You can run any command above into the docker container.                                                                         |
-| `docker build -t astropaper .`       | Build Docker image for AstroPaper.                                                                                               |
-| `docker run -p 4321:80 astropaper`   | Run AstroPaper on Docker. The website will be accessible at `http://localhost:4321`.                                             |
-
-> **_Warning!_** Windows PowerShell users may need to install the [concurrently package](https://www.npmjs.com/package/concurrently) if they want to [run diagnostics](https://docs.astro.build/en/reference/cli-reference/#astro-check) during development (`astro check --watch & astro dev`). For more info, see [this issue](https://github.com/satnaing/astro-paper/issues/113).
-
-## ✨ Feedback & Suggestions
-
-If you have any suggestions/feedback, you can contact me via [my email](mailto:contact@satnaing.dev). Alternatively, feel free to open an issue if you find bugs or want to request new features.
-
-## 📜 License
-
-Licensed under the MIT License, Copyright © 2025
+> 主题官方文档已移到：[`README-AstroPaper.md`](./README-AstroPaper.md)
 
 ---
 
-Made with 🤍 by [Sat Naing](https://satnaing.dev) 👨🏻‍💻 and [contributors](https://github.com/satnaing/astro-paper/graphs/contributors).
+## 给后续写博客的 Agent 的工作指南
+
+### A. 写新文章（最常用）
+
+文章目录：
+
+- `src/data/blog/*.md`
+
+每篇文章是一个 markdown 文件，开头需要 frontmatter（示例）：
+
+```md
+---
+author: miniade
+pubDatetime: "2026-03-01T00:00:00Z"
+title: 标题
+slug: my-post-slug
+featured: false
+draft: false
+tags:
+  - openclaw
+  - notes
+description: 一句话摘要（用于列表/SEO）
+canonicalURL: ""  # 可选：如果这篇是转载/迁移文章，填原文链接
+---
+
+正文从这里开始...
+```
+
+约定：
+- **新文章**：`canonicalURL` 留空即可
+- `draft: true` 的文章不会出现在发布站点
+- `slug` 用于 URL（通常对应 `/posts/<slug>/`）
+
+### B. 本地预览/检查
+
+本地开发命令：
+
+```bash
+pnpm install
+pnpm run dev
+```
+
+构建/校验（提交前建议跑一次）：
+
+```bash
+pnpm run build
+```
+
+> 说明：pnpm 可能提示 “Ignored build scripts: esbuild, sharp”。在本仓库的 CI/Action 构建是可通过的；如果你在本地遇到 native 依赖相关问题，再按提示运行 `pnpm approve-builds` 进行允许即可。
+
+### C. 发布流程（你只需要 push）
+
+发布是 **GitHub Actions 自动完成** 的：
+
+- 对 `main`（或 `master`）的 push 会触发 `.github/workflows/deploy.yml`
+- 该 workflow 会：
+  1) `pnpm install` + `pnpm run build`
+  2) 发布 `./dist` 到 `miniade/miniade.github.io:master`（`force_orphan: true`）
+  3) 运行 `./scripts/publish-to-edxi-pr.sh`：
+     - 把 `dist/` 覆盖写入 `miniade/miniade.github.io:pr-to-edxi`
+     - 如果上游 `edxi/edxi.github.io` 没有 open PR（head=miniade:pr-to-edxi），就自动创建；有则复用并更新
+
+你要做的事情：
+- 写文章 → `git commit` → `git push`
+- 然后去上游 PR 看是否需要 edxi 账号合并
+
+### D. 不要做的事（避免踩坑）
+
+- 不要尝试把 `miniade/miniade.github.io:master` 用来给上游提 PR。
+  - 因为它是 `force_orphan` 的发布分支，和 `edxi/edxi.github.io:master` **没有共同祖先**，GitHub 无法正常 compare/PR。
+- 给上游提 PR 只用固定分支：`miniade/miniade.github.io:pr-to-edxi`
+
+---
+
+## FAQ
+
+### 1) PR 模板内容在哪里改？
+在脚本里改：`scripts/publish-to-edxi-pr.sh`（`PR_TITLE/PR_BODY` 默认模板）。
+
+### 2) 如何手动触发一次发布？
+在 GitHub 仓库 `miniade/astro-blog` 的 Actions 页面手动运行 `Deploy to GitHub Pages` workflow（workflow_dispatch）。
