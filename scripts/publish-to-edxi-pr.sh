@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Publish Astro build output (dist/) to a fixed PR branch in miniade/miniade.github.io,
+# Publish Astro build output (dist/) to a PR branch in miniade/miniade.github.io,
 # rooted at edxi/edxi.github.io:master (so GitHub can generate a clean PR diff).
 #
 # Required env:
@@ -39,7 +39,7 @@ RUN_URL="${GITHUB_SERVER_URL:-https://github.com}/${GITHUB_REPOSITORY:-miniade/a
 BUILD_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 TITLE_DEFAULT="Publish blog build from ${SOURCE_REPO}@${SOURCE_SHA:0:7}"
-BODY_DEFAULT=$(cat <<EOF
+BODY_DEFAULT=$(cat <<EOB
 Automated publish PR.
 
 - Source: ${SOURCE_REPO}@${SOURCE_SHA}
@@ -49,7 +49,7 @@ Automated publish PR.
 Notes:
 - This branch is reset to ${UPSTREAM_REPO}:${UPSTREAM_BASE} on each publish to preserve a common ancestor.
 - The site content is replaced by the latest Astro build output (dist/).
-EOF
+EOB
 )
 
 PR_TITLE="${PR_TITLE:-$TITLE_DEFAULT}"
@@ -61,7 +61,6 @@ trap cleanup EXIT
 
 PAGES_URL="https://x-access-token:${TOKEN}@github.com/${PAGES_REPO}.git"
 
-# Clone the pages repo (fork) and wire upstream.
 git clone --quiet "$PAGES_URL" "$WORKDIR/pages"
 cd "$WORKDIR/pages"
 
@@ -74,10 +73,8 @@ fi
 
 git fetch --quiet upstream "$UPSTREAM_BASE"
 
-# Reset PR branch to upstream base every time (ensures common ancestry).
 git checkout -B "$PR_BRANCH" "upstream/${UPSTREAM_BASE}"
 
-# Replace repo content with dist/
 shopt -s dotglob
 for p in * .[^.]* ..?*; do
   [[ "$p" == ".git" ]] && continue
@@ -87,10 +84,9 @@ shopt -u dotglob
 
 rsync -a --delete --exclude '.git' "${GITHUB_WORKSPACE:-$PWD}/$DIST_DIR/" ./
 
-# Commit/push if anything changed.
 git add -A
 if git diff --cached --quiet; then
-  echo "No changes in dist; branch not updated."
+  echo "No changes in dist; branch content unchanged."
 else
   COMMIT_MSG="chore(pages): publish latest blog build (${SOURCE_SHA:0:7})"
   git commit -m "$COMMIT_MSG" >/dev/null
@@ -98,24 +94,51 @@ else
   echo "Pushed ${PAGES_REPO}:${PR_BRANCH}"
 fi
 
-# Create or reuse PR to upstream.
-EXISTING_URL=$(gh pr list \
+OPEN_PR_JSON=$(gh pr list \
   --repo "$UPSTREAM_REPO" \
   --head "miniade:${PR_BRANCH}" \
   --base "$UPSTREAM_BASE" \
   --state open \
-  --json url \
-  --jq '.[0].url' \
+  --json number,url,state \
+  --jq '.[0]' \
   2>/dev/null || true)
 
-if [[ -n "$EXISTING_URL" && "$EXISTING_URL" != "null" ]]; then
-  echo "PR already open: $EXISTING_URL"
-else
-  NEW_URL=$(gh pr create \
-    --repo "$UPSTREAM_REPO" \
-    --base "$UPSTREAM_BASE" \
-    --head "miniade:${PR_BRANCH}" \
-    --title "$PR_TITLE" \
-    --body "$PR_BODY")
-  echo "PR created: $NEW_URL"
+if [[ -n "$OPEN_PR_JSON" && "$OPEN_PR_JSON" != "null" ]]; then
+  OPEN_PR_URL=$(printf '%s' "$OPEN_PR_JSON" | jq -r '.url')
+  echo "PR already open: $OPEN_PR_URL"
+  exit 0
 fi
+
+ANY_PR_JSON=$(gh pr list \
+  --repo "$UPSTREAM_REPO" \
+  --head "miniade:${PR_BRANCH}" \
+  --base "$UPSTREAM_BASE" \
+  --state all \
+  --json number,url,state,mergedAt \
+  --jq 'sort_by(.number) | reverse | .[0]' \
+  2>/dev/null || true)
+
+HEAD_BRANCH="miniade:${PR_BRANCH}"
+ACTUAL_PR_BRANCH="$PR_BRANCH"
+
+if [[ -n "$ANY_PR_JSON" && "$ANY_PR_JSON" != "null" ]]; then
+  LAST_PR_URL=$(printf '%s' "$ANY_PR_JSON" | jq -r '.url')
+  LAST_PR_STATE=$(printf '%s' "$ANY_PR_JSON" | jq -r '.state')
+  LAST_PR_MERGED_AT=$(printf '%s' "$ANY_PR_JSON" | jq -r '.mergedAt // empty')
+
+  if [[ "$LAST_PR_STATE" == "MERGED" || "$LAST_PR_STATE" == "CLOSED" || -n "$LAST_PR_MERGED_AT" ]]; then
+    ACTUAL_PR_BRANCH="${PR_BRANCH}-${SOURCE_SHA:0:7}"
+    git branch -M "$ACTUAL_PR_BRANCH"
+    git push --force-with-lease origin "$ACTUAL_PR_BRANCH" >/dev/null
+    HEAD_BRANCH="miniade:${ACTUAL_PR_BRANCH}"
+    echo "Previous PR already closed/merged ($LAST_PR_URL); using fresh branch: $ACTUAL_PR_BRANCH"
+  fi
+fi
+
+NEW_URL=$(gh pr create \
+  --repo "$UPSTREAM_REPO" \
+  --base "$UPSTREAM_BASE" \
+  --head "$HEAD_BRANCH" \
+  --title "$PR_TITLE" \
+  --body "$PR_BODY")
+echo "PR created: $NEW_URL"
