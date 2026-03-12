@@ -1,7 +1,17 @@
+const ensureTrailingSlash = (value: string) => value.replace(/\/?$/, "/");
+
+const website = ensureTrailingSlash(
+  process.env.SITE_URL?.trim() || "https://edxi.github.io/"
+);
+
+const profile = ensureTrailingSlash(
+  process.env.SITE_PROFILE_URL?.trim() || website
+);
+
 export const SITE = {
-  website: "https://miniade.github.io/", // replace this with your deployed domain
+  website,
   author: "阿德",
-  profile: "https://miniade.github.io/",
+  profile,
   desc: "阿德的博客 - 记录技术与生活",
   title: "阿德的博客",
   ogImage: "astropaper-og.jpg",

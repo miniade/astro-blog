@@ -11,34 +11,57 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10.11.1
-      
+
       - name: Install dependencies
         run: pnpm install
-      
-      - name: Build site
-        run: pnpm run build
-      
+
+      - name: Run Astro checks
+        run: pnpm exec astro check
+
+      - name: Build miniade artifact
+        env:
+          SITE_URL: https://miniade.github.io/
+          SITE_PROFILE_URL: https://miniade.github.io/
+        run: |
+          rm -rf dist dist-miniade public/pagefind
+          pnpm exec astro build
+          pnpm exec pagefind --site dist
+          cp -r dist/pagefind public/
+          mv dist dist-miniade
+
       - name: Deploy to miniade.github.io
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.DEPLOY_TOKEN }}
           external_repository: miniade/miniade.github.io
           publish_branch: master
-          publish_dir: ./dist
+          publish_dir: ./dist-miniade
           force_orphan: true
+
+      - name: Build edxi artifact
+        env:
+          SITE_URL: https://edxi.github.io/
+          SITE_PROFILE_URL: https://edxi.github.io/
+        run: |
+          rm -rf dist dist-edxi public/pagefind
+          pnpm exec astro build
+          pnpm exec pagefind --site dist
+          cp -r dist/pagefind public/
+          mv dist dist-edxi
 
       - name: Publish PR branch to edxi (pr-to-edxi)
         env:
           GH_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          DIST_DIR: dist-edxi
         run: |
           ./scripts/publish-to-edxi-pr.sh

@@ -84,6 +84,9 @@ shopt -u dotglob
 
 rsync -a --delete --exclude '.git' "${GITHUB_WORKSPACE:-$PWD}/$DIST_DIR/" ./
 
+# GitHub Pages legacy branch deploy ignores underscore-prefixed assets without this.
+: > .nojekyll
+
 git add -A
 if git diff --cached --quiet; then
   echo "No changes in dist; branch content unchanged."
