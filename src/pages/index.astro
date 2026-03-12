@@ -42,18 +42,19 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
       </a>
 
       <p>
-        欢迎来到我的个人博客。这里记录着我的技术探索、学习笔记和生活感悟。
-        我喜欢折腾各种技术，从虚拟化、自动化到容器化，享受解决问题的过程。
+        欢迎来到我的个人博客。这里主要记录我在 AI 时代的技术实践、写作实验与日常思考：
+        一边借助大模型重构工作流，一边继续认真对待工程、工具和问题本身。
       </p>
       <p class="mt-2">
-        你可以浏览下面的最新文章，或者在
+        你可以在这里看到关于自动化、Agent、博客写作、开发流程，以及旧技术经验在新语境下的重新整理。
+        如果你想了解我现在关注什么，可以去
         <LinkButton
           class="underline decoration-dashed underline-offset-4 hover:text-accent"
           href="/about"
         >
           关于页面
         </LinkButton>
-        了解更多关于我的信息。
+        看看。
       </p>
       {
         // only display if at least one social link is enabled
@@ -75,7 +76,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
             { "border-b border-border": recentPosts.length > 0 },
           ]}
         >
-          <h2 class="text-2xl font-semibold tracking-wide">Featured</h2>
+          <h2 class="text-2xl font-semibold tracking-wide">精选文章</h2>
           <ul>
             {featuredPosts.map(data => (
               <Card variant="h3" {...data} />
@@ -88,7 +89,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
     {
       recentPosts.length > 0 && (
         <section id="recent-posts" class="pt-12 pb-6">
-          <h2 class="text-2xl font-semibold tracking-wide">Recent Posts</h2>
+          <h2 class="text-2xl font-semibold tracking-wide">最新文章</h2>
           <ul>
             {recentPosts.map(
               (data, index) =>
