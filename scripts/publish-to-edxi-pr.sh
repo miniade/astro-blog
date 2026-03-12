@@ -138,10 +138,25 @@ if [[ -n "$ANY_PR_JSON" && "$ANY_PR_JSON" != "null" ]]; then
   fi
 fi
 
-NEW_URL=$(gh pr create \
+set +e
+PR_CREATE_OUTPUT=$(gh pr create \
   --repo "$UPSTREAM_REPO" \
   --base "$UPSTREAM_BASE" \
   --head "$HEAD_BRANCH" \
   --title "$PR_TITLE" \
-  --body "$PR_BODY")
-echo "PR created: $NEW_URL"
+  --body "$PR_BODY" 2>&1)
+PR_CREATE_EXIT=$?
+set -e
+
+if [[ $PR_CREATE_EXIT -eq 0 ]]; then
+  echo "PR created: $PR_CREATE_OUTPUT"
+  exit 0
+fi
+
+if [[ "$PR_CREATE_OUTPUT" == *"already exists"* ]]; then
+  echo "$PR_CREATE_OUTPUT"
+  exit 0
+fi
+
+printf '%s\n' "$PR_CREATE_OUTPUT" >&2
+exit "$PR_CREATE_EXIT"
